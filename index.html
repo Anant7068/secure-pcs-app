@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Pcs Examination Portal</title>
+    <title>Secure Pcs Portal</title>
+    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Devanagari", sans-serif; }
         body { background-color: #f0f2f5; color: #1c1e21; padding: 12px; }
@@ -22,20 +22,20 @@
         .option-item { background: #ffffff; border: 1.5px solid #dcdfe6; padding: 12px; border-radius: 8px; margin-bottom: 10px; text-align: left; width: 100%; font-size: 15px; cursor: pointer; }
         .option-item.selected { border-color: #0088cc; background: #e8f4fd; font-weight: bold; color: #0088cc; }
         .explanation-box { background: #f8f9fa; border-left: 4px solid #16a34a; padding: 12px; border-radius: 4px; margin-top: 10px; font-size: 14px; line-height: 1.5; }
-        .hidden { display: none !important; }
         textarea, select, input { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 13px; margin-top: 4px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
+    <!-- हेडर -->
     <div class="header">
         <button class="admin-btn" onclick="toggleAdmin()">⚙️ एडमिन मोड</button>
         <h2>Secure Pcs</h2>
         <p id="user-greeting" style="font-size: 13px; opacity: 0.9; margin-top: 2px;">निशुल्क ई-लर्निंग एवं परीक्षा पोर्टल</p>
     </div>
 
-    <!-- 1. एडमिन पैनल (Bulk Doc Parser & Controls) -->
-    <div id="admin-panel" class="hidden">
+    <!-- 1. एडमिन पैनल (Bulk Doc Parser) -->
+    <div id="admin-panel" style="display: none;">
         <div class="card" style="border: 2px solid #eab308; background: #fffdf5;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                 <h3 style="color:#b45309; font-size:15px;">⚙️ प्रबंधक नियंत्रण कक्ष (Admin Desk)</h3>
@@ -54,7 +54,7 @@
             </select>
 
             <label style="font-size:12px; font-weight:bold;">टेस्ट का नाम:</label>
-            <input type="text" id="doc-test-title" placeholder="उदा: UPPCS टेस्ट 02 (इतिहास व भूगोल)" value="UPPCS लाइव स्पेशल टेस्ट">
+            <input type="text" id="doc-test-title" placeholder="उदा: UPPCS टेस्ट 02" value="UPPCS लाइव स्पेशल टेस्ट">
 
             <label style="font-size:12px; font-weight:bold;">डॉक फाइल का टेक्स्ट यहाँ पेस्ट करें:</label>
             <textarea id="doc-raw-text" rows="8" placeholder="प्रारूप:
@@ -65,9 +65,7 @@
 (D) गाजियाबाद
 (E) इनमें से कोई नहीं
 उत्तर: C
-व्याख्या: गौतमबुद्ध नगर की साक्षरता दर सर्वाधिक 80.12% है।
-
-प्रश्न 2. ..."></textarea>
+व्याख्या: गौतमबुद्ध नगर की साक्षरता दर सर्वाधिक 80.12% है।"></textarea>
 
             <button class="btn btn-success" onclick="processDocText()">⚡ फाइल प्रोसेस करें और लाइव टेस्ट बनाएं</button>
         </div>
@@ -107,16 +105,16 @@
     </div>
 
     <!-- 4. फोल्डर के अंदर टेस्ट लिस्ट -->
-    <div id="section-folder-tests" class="hidden">
+    <div id="section-folder-tests" style="display: none;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
             <h3 id="current-folder-title" style="font-size: 16px;">टेस्ट सूची</h3>
-            <button onclick="backToFolders()" style="background: none; border: none; color: #0088cc; font-weight: bold; cursor: pointer;">← वापस फोल्डर</button>
+            <button onclick="backToFolders()" style="background: none; border: none; color: #0088cc; font-weight: bold; cursor: pointer; font-size: 14px;">← वापस फोल्डर</button>
         </div>
         <div id="tests-list-container"></div>
     </div>
 
     <!-- 5. समाचार सेक्शन -->
-    <div id="section-news" class="hidden">
+    <div id="section-news" style="display: none;">
         <div class="card" style="border-left: 4px solid #0088cc;">
             <span style="font-size: 11px; color: #0088cc; font-weight: bold;">उत्तर प्रदेश समसामयिकी</span>
             <h4 style="margin: 4px 0;">सौर ऊर्जा नीति एवं नवीकरणीय विकास</h4>
@@ -125,7 +123,7 @@
     </div>
 
     <!-- 6. लाइव परीक्षा स्क्रीन -->
-    <div id="screen-exam" class="hidden">
+    <div id="screen-exam" style="display: none;">
         <div class="timer-bar">
             <span id="q-progress">प्रश्न 1 / 5</span>
             <span id="exam-timer">05:00</span>
@@ -138,7 +136,7 @@
     </div>
 
     <!-- 7. विस्तृत परिणाम स्क्रीन -->
-    <div id="screen-result" class="hidden">
+    <div id="screen-result" style="display: none;">
         <div class="card" style="text-align: center;">
             <p style="color: #606770; font-size: 14px;">कुल प्राप्तांक</p>
             <h1 id="score-net" style="color: #0088cc; font-size: 38px; margin: 4px 0;">0.00</h1>
@@ -156,17 +154,7 @@
     </div>
 
     <script>
-        // Supabase Init
-        const SUPABASE_URL = "https://ppznytsxrgshzkifiwza.supabase.co";
-        const SUPABASE_KEY = "Sb_publishable_8DTLPd8ZLhkVNmASJvULew_wtTBr7bh";
-        let supabaseClient = null;
-        try {
-            if (window.supabase) {
-                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            }
-        } catch(e) { console.log(e); }
-
-        // Telegram Setup
+        // टेलीग्राम इनिशियलाइज़ेशन
         if (window.Telegram?.WebApp) {
             window.Telegram.WebApp.ready();
             window.Telegram.WebApp.expand();
@@ -175,13 +163,12 @@
             }
         }
 
-        // Folders & Tests Database
+        // डेटाबेस ऑब्जेक्ट
         const folderDatabase = {
             uppcs: {
                 title: "UPPCS प्रीलिम्स 2026 स्पेशल",
                 tests: [
                     {
-                        id: "uppcs-default",
                         title: "फुल मॉक टेस्ट 01 (GS पेपर 1)",
                         questions: [
                             { q: "उत्तर प्रदेश में 'बब्बर शेर सफारी' किस जिले में स्थित है?", opts: ["बलरामपुर", "इटावा", "महाराजगंज", "पीलीभीत", "इनमें से कोई नहीं"], correct: 1, exp: "लायन सफारी पार्क इटावा जिले में स्थित है।" },
@@ -195,10 +182,10 @@
                 title: "उत्तर प्रदेश विशेष (PYQ)",
                 tests: [
                     {
-                        id: "upsp-default",
                         title: "UP Special टेस्ट 01 - जनगणना एवं नदियाँ",
                         questions: [
-                            { q: "वर्ष 2011 की जनगणना के अनुसार UP का सर्वाधिक साक्षरता वाला जिला?", opts: ["कानपुर नगर", "औरैया", "गौतमबुद्ध नगर", "गाजियाबाद", "इनमें से कोई नहीं"], correct: 2, exp: "गौतमबुद्ध नगर (80.12%) सर्वाधिक साक्षर जिला है।" }
+                            { q: "वर्ष 2011 की जनगणना के अनुसार UP का सर्वाधिक साक्षरता वाला जिला कौन सा है?", opts: ["कानपुर नगर", "औरैया", "गौतमबुद्ध नगर", "गाजियाबाद", "इनमें से कोई नहीं"], correct: 2, exp: "गौतमबुद्ध नगर (80.12%) सर्वाधिक साक्षर जिला है।" },
+                            { q: "उत्तर प्रदेश में न्यूनतम लिंगानुपात वाला जिला कौन सा है?", opts: ["जौनपुर", "आजमगढ़", "गौतमबुद्ध नगर", "बागपत", "इनमें से कोई नहीं"], correct: 2, exp: "गौतमबुद्ध नगर में सबसे कम लिंगानुपात (851) दर्ज किया गया था।" }
                         ]
                     }
                 ]
@@ -207,7 +194,6 @@
                 title: "सामान्य अध्ययन विषयवार अभ्यास",
                 tests: [
                     {
-                        id: "gs-default",
                         title: "GS टेस्ट 01 - पर्यावरण एवं भूगोल",
                         questions: [
                             { q: "भारत का प्रथम राष्ट्रीय उद्यान कौन सा है?", opts: ["जिम कॉर्बेट", "दुधवा", "कान्हा", "गिर", "इनमें से कोई नहीं"], correct: 0, exp: "जिम कॉर्बेट (हेली नेशनल पार्क) की स्थापना 1936 में हुई थी।" }
@@ -217,110 +203,29 @@
             }
         };
 
-        let activeTestQuestions = [];
+        let activeQuestions = [];
         let curIdx = 0, responses = {}, timer = 300, tInterval = null;
 
-        // एडमिन टॉगल (Admin Panel On/Off)
+        // एडमिन पैनल टॉगल
         function toggleAdmin() {
-            const p = document.getElementById('admin-panel');
-            p.classList.toggle('hidden');
+            const adm = document.getElementById('admin-panel');
+            adm.style.display = (adm.style.display === 'none' || adm.style.display === '') ? 'block' : 'none';
         }
 
-        // डॉक फाइल पार्सर: पूरा टेक्स्ट लेकर सीधे सवालों में बदलना
-        function processDocText() {
-            const raw = document.getElementById('doc-raw-text').value.trim();
-            const fKey = document.getElementById('doc-target-folder').value;
-            const tTitle = document.getElementById('doc-test-title').value.trim() || "लाइव प्रैक्टिस टेस्ट";
-
-            if (!raw) {
-                alert("कृपया डॉक फाइल का टेक्स्ट यहाँ पेस्ट करें!");
-                return;
-            }
-
-            // ऑटो स्प्लिटिंग लॉजिक (प्रश्न, A B C D E, उत्तर, व्याख्या)
-            const blocks = raw.split(/(?:प्रश्न|\bQ\.?|\bQues)\s*[0-9]+[.:\)]/gi).filter(b => b.trim().length > 10);
-            
-            if (blocks.length === 0) {
-                alert("टेक्स्ट का फॉर्मेट नहीं मिल सका। कृपया सुनिश्चित करें कि प्रश्नों के आगे 'प्रश्न 1.' या 'Q1.' लिखा हो।");
-                return;
-            }
-
-            const parsedQuestions = [];
-
-            blocks.forEach((block) => {
-                let text = block.trim();
-                
-                // व्याख्या अलग करना
-                let exp = "व्याख्या उपलब्ध नहीं है।";
-                const expMatch = text.match(/(?:व्याख्या|Explanation|हल)\s*[:\-]\s*([\s\S]*)/i);
-                if (expMatch) {
-                    exp = expMatch[1].trim();
-                    text = text.substring(0, expMatch.index).trim();
-                }
-
-                // उत्तर अलग करना
-                let correctIdx = 4; // डिफ़ॉल्ट E
-                const ansMatch = text.match(/(?:उत्तर|Ans|Answer)\s*[:\-]\s*([A-Ea-e])/i);
-                if (ansMatch) {
-                    const char = ansMatch[1].toUpperCase();
-                    correctIdx = char.charCodeAt(0) - 65;
-                    text = text.substring(0, ansMatch.index).trim();
-                }
-
-                // विकल्प A, B, C, D, E अलग करना
-                const optA = (text.match(/\(?A\)?\s*([^\n\r(B)]+)/i) || [,""])[1].trim();
-                const optB = (text.match(/\(?B\)?\s*([^\n\r(C)]+)/i) || [,""])[1].trim();
-                const optC = (text.match(/\(?C\)?\s*([^\n\r(D)]+)/i) || [,""])[1].trim();
-                const optD = (text.match(/\(?D\)?\s*([^\n\r(E)]+)/i) || [,""])[1].trim();
-                let optE = (text.match(/\(?E\)?\s*([^\n\r]+)/i) || [,""])[1].trim();
-                if (!optE) optE = "इनमें से कोई नहीं";
-
-                // प्रश्न का मुख्य वाक्य
-                let qText = text.split(/\(?A\)?/i)[0].trim();
-
-                if (qText && optA && optB) {
-                    parsedQuestions.push({
-                        q: qText,
-                        opts: [optA, optB, optC, optD, optE],
-                        correct: (correctIdx >= 0 && correctIdx <= 4) ? correctIdx : 4,
-                        exp: exp
-                    });
-                }
-            });
-
-            if (parsedQuestions.length === 0) {
-                alert("प्रश्नों के विकल्प नहीं मिल सके। कृपया 'A)', 'B)', 'C)', 'D)' का उपयोग करें।");
-                return;
-            }
-
-            // नए टेस्ट को फ़ोल्डर में जोड़ना
-            folderDatabase[fKey].tests.unshift({
-                id: "test-" + Date.now(),
-                title: tTitle + ` (${parsedQuestions.length} प्रश्न)`,
-                questions: parsedQuestions
-            });
-
-            // काउंटर अपडेट
-            document.getElementById(`cnt-${fKey}`).innerText = `${folderDatabase[fKey].tests.length} टेस्ट उपलब्ध (निशुल्क)`;
-
-            alert(`शानदार! कुल ${parsedQuestions.length} प्रश्न सफलता से लाइव टेस्ट में बदल दिए गए हैं!`);
-            document.getElementById('doc-raw-text').value = '';
-            toggleAdmin();
-            openFolder(fKey);
-        }
-
+        // टैब स्विच
         function switchTab(t) {
-            document.getElementById('tab-f-btn').classList.toggle('active', t === 'folders');
-            document.getElementById('tab-n-btn').classList.toggle('active', t === 'news');
-            document.getElementById('section-folders').classList.toggle('hidden', t !== 'folders');
-            document.getElementById('section-folder-tests').classList.add('hidden');
-            document.getElementById('section-news').classList.toggle('hidden', t !== 'news');
+            document.getElementById('tab-f-btn').className = (t === 'folders') ? 'tab-btn active' : 'tab-btn';
+            document.getElementById('tab-n-btn').className = (t === 'news') ? 'tab-btn active' : 'tab-btn';
+            document.getElementById('section-folders').style.display = (t === 'folders') ? 'block' : 'none';
+            document.getElementById('section-folder-tests').style.display = 'none';
+            document.getElementById('section-news').style.display = (t === 'news') ? 'block' : 'none';
         }
 
+        // फोल्डर खोलना
         function openFolder(fKey) {
             const folder = folderDatabase[fKey];
-            document.getElementById('section-folders').classList.add('hidden');
-            document.getElementById('section-folder-tests').classList.remove('hidden');
+            document.getElementById('section-folders').style.display = 'none';
+            document.getElementById('section-folder-tests').style.display = 'block';
             document.getElementById('current-folder-title').innerText = `📂 ${folder.title}`;
 
             const cont = document.getElementById('tests-list-container');
@@ -337,19 +242,85 @@
         }
 
         function backToFolders() {
-            document.getElementById('screen-exam').classList.add('hidden');
-            document.getElementById('screen-result').classList.add('hidden');
-            document.getElementById('main-nav').classList.remove('hidden');
+            document.getElementById('screen-exam').style.display = 'none';
+            document.getElementById('screen-result').style.display = 'none';
+            document.getElementById('main-nav').style.display = 'flex';
             switchTab('folders');
         }
 
+        // डॉक टेक्स्ट पार्सर
+        function processDocText() {
+            const raw = document.getElementById('doc-raw-text').value.trim();
+            const fKey = document.getElementById('doc-target-folder').value;
+            const tTitle = document.getElementById('doc-test-title').value.trim() || "लाइव टेस्ट";
+
+            if (!raw) { alert("कृपया डॉक फाइल का टेक्स्ट यहाँ पेस्ट करें!"); return; }
+
+            const blocks = raw.split(/(?:प्रश्न|\bQ\.?|\bQues)\s*[0-9]+[.:\)]/gi).filter(b => b.trim().length > 10);
+            if (blocks.length === 0) {
+                alert("प्रश्नों की पहचान नहीं हो सकी। प्रश्न के आगे 'प्रश्न 1.' या 'Q1.' होना आवश्यक है।");
+                return;
+            }
+
+            const parsedList = [];
+            blocks.forEach((block) => {
+                let text = block.trim();
+                let exp = "व्याख्या उपलब्ध नहीं है।";
+                const expMatch = text.match(/(?:व्याख्या|Explanation|हल)\s*[:\-]\s*([\s\S]*)/i);
+                if (expMatch) { exp = expMatch[1].trim(); text = text.substring(0, expMatch.index).trim(); }
+
+                let correctIdx = 4;
+                const ansMatch = text.match(/(?:उत्तर|Ans|Answer)\s*[:\-]\s*([A-Ea-e])/i);
+                if (ansMatch) {
+                    correctIdx = ansMatch[1].toUpperCase().charCodeAt(0) - 65;
+                    text = text.substring(0, ansMatch.index).trim();
+                }
+
+                const optA = (text.match(/\(?A\)?\s*([^\n\r(B)]+)/i) || [,""])[1].trim();
+                const optB = (text.match(/\(?B\)?\s*([^\n\r(C)]+)/i) || [,""])[1].trim();
+                const optC = (text.match(/\(?C\)?\s*([^\n\r(D)]+)/i) || [,""])[1].trim();
+                const optD = (text.match(/\(?D\)?\s*([^\n\r(E)]+)/i) || [,""])[1].trim();
+                let optE = (text.match(/\(?E\)?\s*([^\n\r]+)/i) || [,""])[1].trim();
+                if (!optE) optE = "इनमें से कोई नहीं";
+
+                let qText = text.split(/\(?A\)?/i)[0].trim();
+                if (qText && optA && optB) {
+                    parsedList.push({
+                        q: qText,
+                        opts: [optA, optB, optC, optD, optE],
+                        correct: (correctIdx >= 0 && correctIdx <= 4) ? correctIdx : 4,
+                        exp: exp
+                    });
+                }
+            });
+
+            if (parsedList.length === 0) {
+                alert("विकल्पों की पहचान नहीं हो सकी। (A), (B), (C), (D) प्रारूप का प्रयोग करें।");
+                return;
+            }
+
+            folderDatabase[fKey].tests.unshift({
+                title: tTitle + ` (${parsedList.length} प्रश्न)`,
+                questions: parsedList
+            });
+
+            document.getElementById(`cnt-${fKey}`).innerText = `${folderDatabase[fKey].tests.length} टेस्ट उपलब्ध (निशुल्क)`;
+            alert(`शानदार! कुल ${parsedList.length} प्रश्न टेस्ट में जुड़ गए हैं।`);
+            document.getElementById('doc-raw-text').value = '';
+            toggleAdmin();
+            openFolder(fKey);
+        }
+
+        // टेस्ट शुरू करना
         function startTest(fKey, tIdx) {
-            activeTestQuestions = folderDatabase[fKey].tests[tIdx].questions;
-            document.getElementById('main-nav').classList.add('hidden');
-            document.getElementById('section-folder-tests').classList.add('hidden');
-            document.getElementById('screen-exam').classList.remove('hidden');
-            curIdx = 0; responses = {}; timer = activeTestQuestions.length * 60; // 1 मिनट प्रति प्रश्न
+            activeQuestions = folderDatabase[fKey].tests[tIdx].questions;
+            document.getElementById('main-nav').style.display = 'none';
+            document.getElementById('section-folder-tests').style.display = 'none';
+            document.getElementById('screen-exam').style.display = 'block';
+
+            curIdx = 0; responses = {}; timer = activeQuestions.length * 60;
             renderQ(0);
+
             if (tInterval) clearInterval(tInterval);
             tInterval = setInterval(() => {
                 timer--;
@@ -360,8 +331,8 @@
         }
 
         function renderQ(i) {
-            const q = activeTestQuestions[i];
-            document.getElementById('q-progress').innerText = `प्रश्न ${i + 1} / ${activeTestQuestions.length}`;
+            const q = activeQuestions[i];
+            document.getElementById('q-progress').innerText = `प्रश्न ${i + 1} / ${activeQuestions.length}`;
             document.getElementById('q-text').innerText = q.q;
             const ob = document.getElementById('options-box');
             ob.innerHTML = '';
@@ -372,4 +343,24 @@
                 b.onclick = () => { responses[i] = idx; renderQ(i); };
                 ob.appendChild(b);
             });
-            document.getElementById('btn-next').innerText = (i === activeTestQuestions.len
+            document.getElementById('btn-next').innerText = (i === activeQuestions.length - 1) ? "सबमिट करें" : "अगला प्रश्न";
+        }
+
+        function nextQuestion() {
+            if (curIdx < activeQuestions.length - 1) { curIdx++; renderQ(curIdx); }
+            else { clearInterval(tInterval); endExam(); }
+        }
+
+        // परीक्षा सबमिशन एवं परिणाम
+        function endExam() {
+            document.getElementById('screen-exam').style.display = 'none';
+            document.getElementById('screen-result').style.display = 'block';
+            let c = 0, w = 0;
+            activeQuestions.forEach((q, i) => {
+                if (responses[i] !== undefined) {
+                    if (responses[i] === q.correct) c++; else w++;
+                }
+            });
+            let net = (c * 1.33) - (w * 0.44);
+            document.getElementById('score-net').innerText = Math.max(0, net).toFixed(2);
+            document.getElementById('stat-correct').innerText
