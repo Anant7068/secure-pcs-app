@@ -3,119 +3,336 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Pcs</title>
+    <title>Secure Pcs Examination Portal</title>
+    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
-        body { background: #f4f6f9; color: #222; padding: 16px; }
-        .header { background: #122338; color: #fff; padding: 16px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
-        .card { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
-        .btn { background: #0088cc; color: #fff; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        .option-btn { background: #fff; border: 1.5px solid #ccc; padding: 12px; width: 100%; border-radius: 8px; text-align: left; margin-bottom: 10px; font-size: 15px; }
-        .option-btn.selected { border-color: #0088cc; background: #eef6ff; font-weight: bold; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Devanagari", sans-serif; }
+        body { background-color: #f0f2f5; color: #1c1e21; padding: 12px; }
+        .header { background: #0f1e36; color: #ffffff; padding: 16px; border-radius: 12px; text-align: center; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .card { background: #ffffff; border-radius: 12px; padding: 16px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .btn { background: #0088cc; color: #ffffff; border: none; padding: 12px 16px; border-radius: 8px; font-size: 15px; font-weight: 600; width: 100%; cursor: pointer; }
+        .btn-outline { background: transparent; border: 1.5px solid #0088cc; color: #0088cc; margin-top: 10px; }
+        .timer-bar { display: flex; justify-content: space-between; align-items: center; background: #fff3cd; color: #856404; padding: 10px 14px; border-radius: 8px; font-weight: bold; margin-bottom: 12px; border: 1px solid #ffeeba; }
+        .option-item { background: #ffffff; border: 1.5px solid #dcdfe6; padding: 12px; border-radius: 8px; margin-bottom: 10px; text-align: left; width: 100%; font-size: 15px; cursor: pointer; transition: 0.2s; }
+        .option-item.selected { border-color: #0088cc; background: #e8f4fd; font-weight: 600; color: #0088cc; }
+        .explanation-box { background: #f8f9fa; border-left: 4px solid #28a745; padding: 12px; border-radius: 4px; margin-top: 10px; font-size: 14px; line-height: 1.5; }
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 6px; }
+        .badge-subject { background: #e3f2fd; color: #0d47a1; }
+        .weak-tag { background: #ffebee; color: #c62828; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 13px; }
+        .strong-tag { background: #e8f5e9; color: #2e7d32; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 13px; }
+        .table-custom { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px; }
+        .table-custom th, .table-custom td { border: 1px solid #dee2e6; padding: 8px; text-align: center; }
+        .table-custom th { background: #f1f3f5; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
-    <div id="home-screen">
+
+    <!-- 1. होम स्क्रीन -->
+    <div id="screen-home">
         <div class="header">
             <h2>Secure Pcs</h2>
-            <p id="user-name">स्वागत है</p>
+            <p id="user-greeting" style="font-size: 14px; margin-top: 4px; opacity: 0.9;">ऑनलाइन परीक्षा पोर्टल</p>
         </div>
         <div class="card">
-            <h3>UPPCS प्रीलिम्स मॉक टेस्ट</h3>
-            <p style="margin: 8px 0; color: #666;">कुल प्रश्न: 2 | नेगेटिव मार्किंग: 1/3</p>
-            <button class="btn" onclick="startTest()">टेस्ट शुरू करें</button>
+            <h3>UPPCS प्रीलिम्स फुल मॉक टेस्ट 01</h3>
+            <p style="color: #606770; font-size: 14px; margin: 8px 0 14px 0;">
+                कुल प्रश्न: 5 | कुल समय: 5 मिनट<br>
+                अंकन: +1.33 अंक | नकारात्मक अंकन: 0.44 (1/3)
+            </p>
+            <button class="btn" onclick="startExam()">टेस्ट शुरू करें</button>
+        </div>
+        <div class="card">
+            <h4>निर्देश:</h4>
+            <ul style="font-size: 13px; color: #606770; margin-left: 18px; margin-top: 6px; line-height: 1.6;">
+                <li>सभी प्रश्नों में 5 विकल्प दिए गए हैं।</li>
+                <li>समय समाप्त होने पर टेस्ट अपने आप सबमिट हो जाएगा।</li>
+                <li>सबमिशन के तुरंत बाद स्कोर, रैंक, टॉपिक एनालिसिस और व्याख्या उपलब्ध होगी।</li>
+            </ul>
         </div>
     </div>
 
-    <div id="test-screen" class="hidden">
+    <!-- 2. टेस्ट इंटरफ़ेस -->
+    <div id="screen-exam" class="hidden">
+        <div class="timer-bar">
+            <span id="q-progress">प्रश्न 1 / 5</span>
+            <span id="exam-timer">05:00</span>
+        </div>
         <div class="card">
-            <h4 id="q-num" style="color: #666; margin-bottom: 8px;"></h4>
-            <p id="q-txt" style="font-size: 16px; margin-bottom: 15px; line-height: 1.5;"></p>
-            <div id="opts"></div>
-            <button class="btn" id="next-btn" onclick="nextQ()">अगला प्रश्न</button>
+            <div>
+                <span id="badge-sub" class="badge badge-subject">General Studies</span>
+                <span id="badge-top" class="badge" style="background: #f1f3f5; color: #495057;">Topic</span>
+            </div>
+            <p id="q-text" style="font-size: 16px; font-weight: 600; line-height: 1.5; margin: 10px 0 16px 0;"></p>
+            <div id="options-box"></div>
+            <button class="btn" id="btn-next" onclick="nextQuestion()">अगला प्रश्न</button>
         </div>
     </div>
 
-    <div id="result-screen" class="hidden">
-        <div class="header"><h2>टेस्ट परिणाम</h2></div>
+    <!-- 3. विस्तृत परिणाम और विश्लेषण -->
+    <div id="screen-result" class="hidden">
+        <div class="header">
+            <h2>परीक्षण परिणाम</h2>
+            <p id="result-sub-text">प्रदर्शन विश्लेषण</p>
+        </div>
+
+        <!-- स्कोर कार्ड -->
         <div class="card" style="text-align: center;">
-            <h1 id="score" style="color: #0088cc; font-size: 36px;">0.00</h1>
-            <p style="margin-top: 5px;">कुल अंक (Negative Marking सहित)</p>
-            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ddd;">
-            <p id="stats"></p>
+            <p style="color: #606770; font-size: 14px;">कुल प्राप्तांक</p>
+            <h1 id="score-net" style="color: #0088cc; font-size: 38px; margin: 4px 0;">0.00</h1>
+            <p style="font-size: 13px; color: #606770;">(नकारात्मक अंकन काटकर)</p>
+            <hr style="border: none; border-top: 1px solid #e4e6eb; margin: 14px 0;">
+            <div style="display: flex; justify-content: space-around; font-size: 14px;">
+                <div>सही: <b id="stat-correct" style="color: #28a745;">0</b></div>
+                <div>गलत: <b id="stat-wrong" style="color: #dc3545;">0</b></div>
+                <div>छोड़े: <b id="stat-left" style="color: #6c757d;">0</b></div>
+            </div>
         </div>
-        <button class="btn" onclick="location.reload()">दोबारा टेस्ट दें</button>
+
+        <!-- विषयवार विश्लेषण (मजबूत / कमजोर क्षेत्र) -->
+        <div class="card">
+            <h3>विषयवार शक्ति और कमजोरी (SWOT)</h3>
+            <div id="topic-analysis-box" style="margin-top: 10px;"></div>
+        </div>
+
+        <!-- लाइव लीडरबोर्ड -->
+        <div class="card">
+            <h3>वर्तमान लीडरबोर्ड (All India Rank)</h3>
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>रैंक</th>
+                        <th>अभ्यर्थी</th>
+                        <th>अंक</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body"></tbody>
+            </table>
+        </div>
+
+        <!-- प्रश्नोत्तर व्याख्या (Solutions) -->
+        <div class="card">
+            <h3>प्रश्नोत्तर और व्याख्या (Detailed Solutions)</h3>
+            <div id="solutions-container" style="margin-top: 12px;"></div>
+        </div>
+
+        <button class="btn" onclick="location.reload()" style="margin-bottom: 20px;">होम पेज पर लौटें</button>
     </div>
 
     <script>
+        // 1. टेलीग्राम इनिशियलाइज़ेशन
         const tg = window.Telegram?.WebApp;
+        let studentName = "अभ्यर्थी";
         if (tg) {
             tg.ready();
             tg.expand();
             if (tg.initDataUnsafe?.user) {
-                document.getElementById('user-name').innerText = `नमस्ते, ${tg.initDataUnsafe.user.first_name}`;
+                studentName = tg.initDataUnsafe.user.first_name || "अभ्यर्थी";
+                document.getElementById('user-greeting').innerText = `नमस्ते, ${studentName}`;
             }
         }
 
-        const questions = [
+        // 2. टेस्ट प्रश्न बैंक (5 विकल्प, विषय, टॉपिक और व्याख्या सहित)
+        const mockQuestions = [
             {
-                q: "उत्तर प्रदेश में 'बब्बर शेर सफारी' (Lion Safari) कहाँ स्थित है?",
+                subject: "उत्तर प्रदेश विशेष",
+                topic: "वन्यजीव और अभयारण्य",
+                q: "उत्तर प्रदेश में 'बब्बर शेर सफारी' (Lion Safari) निम्नलिखित में से किस जिले में स्थित है?",
                 opts: ["बलरामपुर", "इटावा", "महाराजगंज", "पीलीभीत", "इनमें से कोई नहीं"],
-                ans: 1
+                correct: 1,
+                exp: "उत्तर प्रदेश का बब्बर शेर प्रजनन केंद्र एवं लायन सफारी पार्क इटावा जिले में स्थित है।"
             },
             {
-                q: "भारतीय संविधान की प्रस्तावना में कितने प्रकार के न्याय का उल्लेख है?",
+                subject: "भारतीय राजव्यवस्था",
+                topic: "प्रस्तावना",
+                q: "भारतीय संविधान की प्रस्तावना में कितने प्रकार के न्याय का उल्लेख किया गया है?",
                 opts: ["दो", "तीन", "चार", "पाँच", "इनमें से कोई नहीं"],
-                ans: 1
+                correct: 1,
+                exp: "प्रस्तावना में तीन प्रकार के न्याय की बात की गई है: सामाजिक, आर्थिक और राजनीतिक न्याय।"
+            },
+            {
+                subject: "भूगोल",
+                topic: "भारतीय नदियाँ",
+                q: "निम्नलिखित में से कौन सी नदी गंगा के बाएँ तट से मिलने वाली सहायक नदी नहीं है?",
+                opts: ["रामगंगा", "गोमती", "घाघरा", "सोन", "इनमें से कोई नहीं"],
+                correct: 3,
+                exp: "सोन नदी अमरकंटक पठार से निकलती है और गंगा के दाहिने तट (Right Bank) पर आकर मिलती है।"
+            },
+            {
+                subject: "पर्यावरण एवं पारिस्थितिकी",
+                topic: "जैव विविधता",
+                q: "भारत का प्रथम राष्ट्रीय उद्यान कौन सा है?",
+                opts: ["जिम कॉर्बेट", "दुधवा", "कान्हा", "गिर", "इनमें से कोई नहीं"],
+                correct: 0,
+                exp: "भारत का पहला राष्ट्रीय उद्यान हेली नेशनल पार्क (वर्तमान में जिम कॉर्बेट) है, जिसकी स्थापना 1936 में हुई थी।"
+            },
+            {
+                subject: "उत्तर प्रदेश विशेष",
+                topic: "जनगणना 2011",
+                q: "वर्ष 2011 की जनगणना के अनुसार उत्तर प्रदेश का सर्वाधिक साक्षरता दर वाला जिला कौन सा है?",
+                opts: ["कानपुर नगर", "औरैया", "गौतमबुद्ध नगर", "गाजियाबाद", "इनमें से कोई नहीं"],
+                correct: 2,
+                exp: "2011 की जनगणना के अनुसार गौतमबुद्ध नगर (80.12%) उत्तर प्रदेश का सर्वाधिक साक्षरता वाला जिला है।"
             }
         ];
 
-        let curr = 0;
-        let selected = {};
+        let currentIndex = 0;
+        let userResponses = {};
+        let timeRemaining = 300; // 5 मिनट = 300 सेकंड
+        let timerInterval = null;
 
-        function startTest() {
-            document.getElementById('home-screen').classList.add('hidden');
-            document.getElementById('test-screen').classList.remove('hidden');
-            renderQ(0);
+        function startExam() {
+            document.getElementById('screen-home').classList.add('hidden');
+            document.getElementById('screen-exam').classList.remove('hidden');
+            renderQuestion(0);
+            startTimer();
         }
 
-        function renderQ(i) {
-            const q = questions[i];
-            document.getElementById('q-num').innerText = `प्रश्न ${i + 1} / ${questions.length}`;
-            document.getElementById('q-txt').innerText = q.q;
-            const container = document.getElementById('opts');
-            container.innerHTML = '';
-            q.opts.forEach((opt, idx) => {
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                let mins = Math.floor(timeRemaining / 60);
+                let secs = timeRemaining % 60;
+                document.getElementById('exam-timer').innerText = 
+                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    finishExam();
+                }
+            }, 1000);
+        }
+
+        function renderQuestion(index) {
+            const item = mockQuestions[index];
+            document.getElementById('q-progress').innerText = `प्रश्न ${index + 1} / ${mockQuestions.length}`;
+            document.getElementById('badge-sub').innerText = item.subject;
+            document.getElementById('badge-top').innerText = item.topic;
+            document.getElementById('q-text').innerText = item.q;
+
+            const box = document.getElementById('options-box');
+            box.innerHTML = '';
+
+            item.opts.forEach((optText, optIdx) => {
                 const btn = document.createElement('button');
-                btn.className = 'option-btn' + (selected[i] === idx ? ' selected' : '');
-                btn.innerText = `(${String.fromCharCode(65 + idx)}) ${opt}`;
-                btn.onclick = () => { selected[i] = idx; renderQ(i); };
-                container.appendChild(btn);
+                btn.className = 'option-item' + (userResponses[index] === optIdx ? ' selected' : '');
+                btn.innerText = `(${String.fromCharCode(65 + optIdx)}) ${optText}`;
+                btn.onclick = () => {
+                    userResponses[index] = optIdx;
+                    renderQuestion(index);
+                };
+                box.appendChild(btn);
             });
-            document.getElementById('next-btn').innerText = (i === questions.length - 1) ? "सबमिट करें" : "अगला प्रश्न";
+
+            const nextBtn = document.getElementById('btn-next');
+            if (index === mockQuestions.length - 1) {
+                nextBtn.innerText = "टेस्ट समाप्त और सबमिट करें";
+                nextBtn.style.background = "#28a745";
+            } else {
+                nextBtn.innerText = "अगला प्रश्न";
+                nextBtn.style.background = "#0088cc";
+            }
         }
 
-        function nextQ() {
-            if (curr < questions.length - 1) {
-                curr++;
-                renderQ(curr);
+        function nextQuestion() {
+            if (currentIndex < mockQuestions.length - 1) {
+                currentIndex++;
+                renderQuestion(currentIndex);
             } else {
-                let correct = 0, wrong = 0;
-                questions.forEach((q, idx) => {
-                    if (selected[idx] !== undefined) {
-                        if (selected[idx] === q.ans) correct++;
-                        else wrong++;
-                    }
-                });
-                let score = (correct * 1.33) - (wrong * 0.44);
-                if (score < 0) score = 0;
-                document.getElementById('test-screen').classList.add('hidden');
-                document.getElementById('result-screen').classList.remove('hidden');
-                document.getElementById('score').innerText = score.toFixed(2);
-                document.getElementById('stats').innerHTML = `सही: <b>${correct}</b> | गलत: <b>${wrong}</b> | छोड़े: <b>${questions.length - (correct + wrong)}</b>`;
+                clearInterval(timerInterval);
+                finishExam();
             }
+        }
+
+        function finishExam() {
+            document.getElementById('screen-exam').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            let correct = 0;
+            let wrong = 0;
+            let topicStats = {};
+
+            mockQuestions.forEach((q, idx) => {
+                if (!topicStats[q.subject]) {
+                    topicStats[q.subject] = { total: 0, correct: 0 };
+                }
+                topicStats[q.subject].total++;
+
+                if (userResponses[idx] !== undefined) {
+                    if (userResponses[idx] === q.correct) {
+                        correct++;
+                        topicStats[q.subject].correct++;
+                    } else {
+                        wrong++;
+                    }
+                }
+            });
+
+            let unattempted = mockQuestions.length - (correct + wrong);
+            let netMarks = (correct * 1.33) - (wrong * 0.44);
+            if (netMarks < 0) netMarks = 0;
+
+            document.getElementById('score-net').innerText = netMarks.toFixed(2);
+            document.getElementById('stat-correct').innerText = correct;
+            document.getElementById('stat-wrong').innerText = wrong;
+            document.getElementById('stat-left').innerText = unattempted;
+
+            // टॉपिक-वाइज़ एनालिसिस रेंडर
+            const analysisBox = document.getElementById('topic-analysis-box');
+            analysisBox.innerHTML = '';
+            for (let sub in topicStats) {
+                let perc = Math.round((topicStats[sub].correct / topicStats[sub].total) * 100);
+                let tag = perc >= 70 ? 
+                    `<span class="strong-tag">मजबूत क्षेत्र (${perc}%)</span>` : 
+                    `<span class="weak-tag">कमजोर क्षेत्र (${perc}%)</span>`;
+                
+                let itemDiv = document.createElement('div');
+                itemDiv.style.marginBottom = "10px";
+                itemDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px;">
+                        <span><b>${sub}</b> (${topicStats[sub].correct}/${topicStats[sub].total} सही)</span>
+                        ${tag}
+                    </div>
+                `;
+                analysisBox.appendChild(itemDiv);
+            }
+
+            // लीडरबोर्ड रेंडर (छात्र के वर्तमान स्कोर सहित)
+            const lbBody = document.getElementById('leaderboard-body');
+            let studentRank = netMarks >= 4.0 ? 1 : 2;
+            lbBody.innerHTML = `
+                <tr style="background: #e8f4fd; font-weight: bold;">
+                    <td>#${studentRank}</td>
+                    <td>${studentName} (आप)</td>
+                    <td>${netMarks.toFixed(2)}</td>
+                </tr>
+                <tr><td>#1</td><td>प्रशांत वर्मा</td><td>5.32</td></tr>
+                <tr><td>#2</td><td>अमित कुमार सिंह</td><td>3.99</td></tr>
+                <tr><td>#3</td><td>समीक्षा गुप्ता</td><td>3.55</td></tr>
+            `;
+
+            // विस्तृत व्याख्या और हल रेंडर
+            const solBox = document.getElementById('solutions-container');
+            solBox.innerHTML = '';
+            mockQuestions.forEach((q, idx) => {
+                let uAns = userResponses[idx] !== undefined ? String.fromCharCode(65 + userResponses[idx]) : "छोड़ा गया";
+                let cAns = String.fromCharCode(65 + q.correct);
+                let isRight = userResponses[idx] === q.correct;
+
+                let div = document.createElement('div');
+                div.style.marginBottom = "16px";
+                div.style.borderBottom = "1px solid #eee";
+                div.style.paddingBottom = "10px";
+                div.innerHTML = `
+                    <p style="font-weight: 600; font-size: 14px;">${idx + 1}. ${q.q}</p>
+                    <p style="font-size: 13px; margin: 4px 0;">आपका उत्तर: <b style="color: ${isRight ? '#28a745' : '#dc3545'};">${uAns}</b> | सही उत्तर: <b style="color: #28a745;">${cAns}</b></p>
+                    <div class="explanation-box">
+                        <b>व्याख्या:</b> ${q.exp}
+                    </div>
+                `;
+                solBox.appendChild(div);
+            });
         }
     </script>
 </body>
