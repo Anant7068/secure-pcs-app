@@ -6,8 +6,6 @@
     <title>Secure Pcs Portal</title>
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Devanagari", sans-serif; }
         body { background-color: #f4f6f9; color: #1c1e21; padding: 12px; }
@@ -16,8 +14,8 @@
         .tab-btn { flex: 1; padding: 10px; background: #e4e6eb; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: #4b4f56; font-size: 14px; }
         .tab-btn.active { background: #0088cc; color: #ffffff; }
         .card { background: #ffffff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .folder-card { display: flex; align-items: center; justify-content: space-between; background: #ffffff; border-left: 5px solid #0088cc; padding: 14px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); cursor: pointer; }
         .btn { background: #0088cc; color: #ffffff; border: none; padding: 10px 14px; border-radius: 6px; font-size: 14px; font-weight: 600; width: 100%; cursor: pointer; }
-        .btn-gold { background: #d97706; color: #fff; }
         .timer-bar { display: flex; justify-content: space-between; align-items: center; background: #fff3cd; color: #856404; padding: 10px 14px; border-radius: 8px; font-weight: bold; margin-bottom: 12px; }
         .option-item { background: #ffffff; border: 1.5px solid #dcdfe6; padding: 12px; border-radius: 8px; margin-bottom: 10px; text-align: left; width: 100%; font-size: 15px; cursor: pointer; }
         .option-item.selected { border-color: #0088cc; background: #e8f4fd; font-weight: 600; color: #0088cc; }
@@ -31,33 +29,54 @@
     <!-- हेडर -->
     <div class="header">
         <h2>Secure Pcs</h2>
-        <p id="user-greeting" style="font-size: 13px; opacity: 0.9; margin-top: 4px;">ई-लर्निंग एवं टेस्ट पोर्टल</p>
+        <p id="user-greeting" style="font-size: 13px; opacity: 0.9; margin-top: 4px;">निशुल्क ई-लर्निंग एवं परीक्षा पोर्टल</p>
     </div>
 
     <!-- नेविगेशन टैब्स -->
     <div class="nav-tabs" id="main-nav">
-        <button class="tab-btn active" onclick="switchTab('tests')">📝 टेस्ट सीरीज़</button>
-        <button class="tab-btn" onclick="switchTab('news')">📰 दैनिक समाचार</button>
+        <button class="tab-btn active" onclick="switchTab('folders')">📁 बैच एवं टेस्ट फोल्डर</button>
+        <button class="tab-btn" onclick="switchTab('news')">📰 दैनिक समसामयिकी</button>
     </div>
 
-    <!-- 1. टेस्ट सीरीज़ सेक्शन -->
-    <div id="section-tests">
-        <div class="card">
-            <span style="background: #e8f5e9; color: #2e7d32; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">फ्री डेमो टेस्ट</span>
-            <h3 style="margin-top: 6px;">UPPCS GS पेपर 01 - मिनी टेस्ट</h3>
-            <p style="font-size: 13px; color: #606770; margin: 6px 0 12px 0;">कुल प्रश्न: 5 | नकारात्मक अंकन: 1/3</p>
-            <button class="btn" onclick="startTest('free')">फ्री टेस्ट शुरू करें</button>
+    <!-- 1. फोल्डर लिस्ट स्क्रीन (Batches/Folders) -->
+    <div id="section-folders">
+        <p style="font-size: 13px; color: #606770; margin-bottom: 10px;">अपनी परीक्षा या विषय का फोल्डर चुनें:</p>
+        
+        <div class="folder-card" onclick="openFolder('uppcs')">
+            <div>
+                <h4 style="color: #0f1e36;">📂 UPPCS प्रीलिम्स 2026 स्पेशल</h4>
+                <p style="font-size: 12px; color: #606770; margin-top: 3px;">फुल लेंथ मॉक टेस्ट एवं विषयवार रिवीजन</p>
+            </div>
+            <span style="font-weight: bold; color: #0088cc;">खोलें ➔</span>
         </div>
 
-        <div class="card" style="border: 1.5px solid #d97706;">
-            <span style="background: #fef3c7; color: #92400e; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">प्रीमियम टारगेट बैच</span>
-            <h3 style="margin-top: 6px;">UPPCS Prelims टारगेट टेस्ट सीरीज़</h3>
-            <p style="font-size: 13px; color: #606770; margin: 6px 0 12px 0;">संपूर्ण 60 टेस्ट + विषयवार SWOT विश्लेषण + रैंक लिस्ट</p>
-            <button class="btn btn-gold" onclick="openPaymentModal()">बैच अनलॉक करें (₹499)</button>
+        <div class="folder-card" onclick="openFolder('upspecial')">
+            <div>
+                <h4 style="color: #0f1e36;">📂 उत्तर प्रदेश विशेष (UP Special PYQ)</h4>
+                <p style="font-size: 12px; color: #606770; margin-top: 3px;">UPPSC व UPSSSC विगत वर्षों के प्रश्न संग्रह</p>
+            </div>
+            <span style="font-weight: bold; color: #0088cc;">खोलें ➔</span>
+        </div>
+
+        <div class="folder-card" onclick="openFolder('gs')">
+            <div>
+                <h4 style="color: #0f1e36;">📂 सामान्य अध्ययन विषयवार अभ्यास</h4>
+                <p style="font-size: 12px; color: #606770; margin-top: 3px;">इतिहास, भूगोल, राजव्यवस्था एवं पर्यावरण</p>
+            </div>
+            <span style="font-weight: bold; color: #0088cc;">खोलें ➔</span>
         </div>
     </div>
 
-    <!-- 2. दैनिक समाचार एवं न्यूज़ क्लिप्स सेक्शन -->
+    <!-- 2. फोल्डर के अंदर टेस्ट लिस्ट स्क्रीन -->
+    <div id="section-folder-tests" class="hidden">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <h3 id="current-folder-title" style="font-size: 16px;">टेस्ट सूची</h3>
+            <button onclick="backToFolders()" style="background: none; border: none; color: #0088cc; font-weight: bold; cursor: pointer;">← वापस फोल्डर</button>
+        </div>
+        <div id="tests-list-container"></div>
+    </div>
+
+    <!-- 3. दैनिक समाचार एवं न्यूज़ क्लिप्स सेक्शन -->
     <div id="section-news" class="hidden">
         <div id="news-list-container">
             <div class="news-card">
@@ -67,13 +86,13 @@
             </div>
             <div class="news-card">
                 <span style="font-size: 11px; color: #0088cc; font-weight: bold;">राष्ट्रीय परिदृश्य</span>
-                <h4 style="margin: 4px 0;">सिविल सेवा प्रारंभिक परीक्षा हेतु महत्वपूर्ण दिशानिर्देश</h4>
-                <p style="font-size: 13px; color: #4b4f56; line-height: 1.4;">प्रतियोगी परीक्षाओं में समसामयिक मुद्दों और राज्य-आधारित विशेष प्रश्नों के भार में निरंतर वृद्धि देखी जा रही है।</p>
+                <h4 style="margin: 4px 0;">प्रतियोगी परीक्षा तैयारी रणनीति</h4>
+                <p style="font-size: 13px; color: #4b4f56; line-height: 1.4;">नवीनतम परीक्षा पैटर्न के अनुसार तथ्यात्मक और अवधारणात्मक दोनों स्तरों पर संतुलित अभ्यास आवश्यक है।</p>
             </div>
         </div>
     </div>
 
-    <!-- 3. लाइव परीक्षा स्क्रीन -->
+    <!-- 4. लाइव परीक्षा स्क्रीन -->
     <div id="screen-exam" class="hidden">
         <div class="timer-bar">
             <span id="q-progress">प्रश्न 1 / 5</span>
@@ -86,7 +105,7 @@
         </div>
     </div>
 
-    <!-- 4. परिणाम स्क्रीन -->
+    <!-- 5. परिणाम स्क्रीन -->
     <div id="screen-result" class="hidden">
         <div class="card" style="text-align: center;">
             <p style="color: #606770; font-size: 14px;">कुल प्राप्तांक</p>
@@ -101,69 +120,99 @@
             <h3>प्रश्नोत्तर एवं विस्तृत व्याख्या</h3>
             <div id="solutions-container" style="margin-top: 12px;"></div>
         </div>
-        <button class="btn" onclick="location.reload()" style="margin-bottom: 20px;">मुख्य पृष्ठ पर जाएँ</button>
-    </div>
-
-    <!-- 5. पेमेंट मॉडल (UPI & QR) -->
-    <div id="modal-pay" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; padding: 16px;">
-        <div class="card" style="width: 100%; max-width: 360px; text-align: center;">
-            <h3>बैच एक्टिवेशन (₹499)</h3>
-            <p style="font-size: 13px; color: #606770; margin: 8px 0;">UPI के माध्यम से भुगतान करें और UTR नंबर दर्ज करें</p>
-            <div style="background: #e8f4fd; padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 12px; font-size: 15px;">
-                UPI ID: securepcs@upi
-            </div>
-            <input type="text" id="utr-input" placeholder="12 अंकों का UTR / Transaction No." style="width: 100%; padding: 10px; border: 1.5px solid #ccc; border-radius: 6px; margin-bottom: 12px; font-size: 14px;">
-            <button class="btn" onclick="submitPayment()">सत्यापन हेतु भेजें</button>
-            <button class="btn" onclick="closePaymentModal()" style="background: transparent; color: #606770; margin-top: 6px;">रद्द करें</button>
-        </div>
+        <button class="btn" onclick="backToFolders()" style="margin-bottom: 20px;">वापस फोल्डर सूची पर जाएँ</button>
     </div>
 
     <script>
-        // Supabase कॉन्फ़िगरेशन
-        const SUPABASE_URL = "https://ppznytsxrgshzkifiwza.supabase.co";
-        const SUPABASE_KEY = "Sb_publishable_8DTLPd8ZLhkVNmASJvULew_wtTBr7bh";
-        const supabase = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // Telegram इनिशियलाइज़ेशन
+        // Telegram WebApp Setup
         const tg = window.Telegram?.WebApp;
-        let tgUser = { id: 1001, first_name: "अभ्यर्थी" };
         if (tg) {
             tg.ready();
             tg.expand();
             if (tg.initDataUnsafe?.user) {
-                tgUser = tg.initDataUnsafe.user;
-                document.getElementById('user-greeting').innerText = `नमस्ते, ${tgUser.first_name}`;
+                document.getElementById('user-greeting').innerText = `नमस्ते, ${tgUser = tg.initDataUnsafe.user.first_name || 'अभ्यर्थी'}`;
             }
         }
 
-        // टैब स्विचिंग (टेस्ट vs न्यूज़)
-        function switchTab(tab) {
-            const tabs = document.querySelectorAll('.tab-btn');
-            tabs.forEach(t => t.classList.remove('active'));
-            if (tab === 'tests') {
-                tabs[0].classList.add('active');
-                document.getElementById('section-tests').classList.remove('hidden');
-                document.getElementById('section-news').classList.add('hidden');
-            } else {
-                tabs[1].classList.add('active');
-                document.getElementById('section-tests').classList.add('hidden');
-                document.getElementById('section-news').classList.remove('hidden');
+        // Folder & Test Data
+        const folderDatabase = {
+            uppcs: {
+                title: "UPPCS प्रीलिम्स 2026 स्पेशल",
+                tests: [
+                    { id: "uppcs-01", title: "फुल मॉक टेस्ट 01 (GS पेपर 1)", questionsCount: 5, duration: 5 }
+                ]
+            },
+            upspecial: {
+                title: "उत्तर प्रदेश विशेष (PYQ)",
+                tests: [
+                    { id: "upsp-01", title: "UP Special टेस्ट 01 - कला, संस्कृति व भूगोल", questionsCount: 5, duration: 5 }
+                ]
+            },
+            gs: {
+                title: "सामान्य अध्ययन विषयवार अभ्यास",
+                tests: [
+                    { id: "gs-01", title: "भारतीय राजव्यवस्था - प्रस्तावना एवं मौलिक अधिकार", questionsCount: 5, duration: 5 }
+                ]
             }
-        }
+        };
 
-        // टेस्ट डेटा
-        const testBank = [
+        const testQuestions = [
             { q: "उत्तर प्रदेश में 'बब्बर शेर सफारी' किस जिले में स्थित है?", opts: ["बलरामपुर", "इटावा", "महाराजगंज", "पीलीभीत", "इनमें से कोई नहीं"], correct: 1, exp: "लायन सफारी इटावा जिले में स्थित है।" },
-            { q: "संविधान की प्रस्तावना में कितने प्रकार के न्याय का उल्लेख है?", opts: ["दो", "तीन", "चार", "पाँच", "इनमें से कोई नहीं"], correct: 1, exp: "तीन प्रकार: सामाजिक, आर्थिक और राजनीतिक।" },
-            { q: "गंगा के बाएँ तट से मिलने वाली सहायक नदी कौन सी नहीं है?", opts: ["रामगंगा", "गोमती", "घाघरा", "सोन", "इनमें से कोई नहीं"], correct: 3, exp: "सोन नदी दाहिने तट (Right Bank) पर आकर मिलती है।" }
+            { q: "संविधान की प्रस्तावना में कितने प्रकार के न्याय का उल्लेख है?", opts: ["दो", "तीन", "चार", "पाँच", "इनमें से कोई नहीं"], correct: 1, exp: "तीन प्रकार के न्याय: सामाजिक, आर्थिक और राजनीतिक न्याय।" },
+            { q: "गंगा के बाएँ तट से मिलने वाली सहायक नदी कौन सी नहीं है?", opts: ["रामगंगा", "गोमती", "घाघरा", "सोन", "इनमें से कोई नहीं"], correct: 3, exp: "सोन नदी अमरकंटक से निकलकर दाहिने तट पर मिलती है।" },
+            { q: "वर्ष 2011 की जनगणना के अनुसार उत्तर प्रदेश का सर्वाधिक साक्षरता वाला जिला?", opts: ["कानपुर नगर", "औरैया", "गौतमबुद्ध नगर", "गाजियाबाद", "इनमें से कोई नहीं"], correct: 2, exp: "गौतमबुद्ध नगर (80.12%) सर्वाधिक साक्षर जिला है।" },
+            { q: "भारत का प्रथम राष्ट्रीय उद्यान कौन सा है?", opts: ["जिम कॉर्बेट", "दुधवा", "कान्हा", "गिर", "इनमें से कोई नहीं"], correct: 0, exp: "जिम कॉर्बेट (हेली नेशनल पार्क) की स्थापना 1936 में हुई थी।" }
         ];
 
         let curIdx = 0, responses = {}, timer = 300, tInterval;
 
-        function startTest(type) {
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(t => t.classList.remove('active'));
+            if (tab === 'folders') {
+                tabs[0].classList.add('active');
+                document.getElementById('section-folders').classList.remove('hidden');
+                document.getElementById('section-folder-tests').classList.add('hidden');
+                document.getElementById('section-news').classList.add('hidden');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('section-folders').classList.add('hidden');
+                document.getElementById('section-folder-tests').classList.add('hidden');
+                document.getElementById('section-news').classList.remove('hidden');
+            }
+        }
+
+        function openFolder(folderKey) {
+            const folder = folderDatabase[folderKey];
+            document.getElementById('section-folders').classList.add('hidden');
+            document.getElementById('section-folder-tests').classList.remove('hidden');
+            document.getElementById('current-folder-title').innerText = `📂 ${folder.title}`;
+
+            const cont = document.getElementById('tests-list-container');
+            cont.innerHTML = '';
+            folder.tests.forEach(t => {
+                cont.innerHTML += `
+                    <div class="card">
+                        <span style="background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">निशुल्क टेस्ट</span>
+                        <h4 style="margin: 6px 0;">${t.title}</h4>
+                        <p style="font-size: 12px; color: #606770; margin-bottom: 12px;">प्रश्न: ${t.questionsCount} | समय: ${t.duration} मिनट | 1/3 नेगेटिव मार्किंग</p>
+                        <button class="btn" onclick="startTest()">टेस्ट शुरू करें</button>
+                    </div>`;
+            });
+        }
+
+        function backToFolders() {
+            document.getElementById('screen-exam').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('main-nav').classList.remove('hidden');
+            switchTab('folders');
+        }
+
+        function startTest() {
             document.getElementById('main-nav').classList.add('hidden');
-            document.getElementById('section-tests').classList.add('hidden');
+            document.getElementById('section-folder-tests').classList.add('hidden');
             document.getElementById('screen-exam').classList.remove('hidden');
+            curIdx = 0; responses = {}; timer = 300;
             renderQ(0);
             tInterval = setInterval(() => {
                 timer--;
@@ -174,8 +223,8 @@
         }
 
         function renderQ(i) {
-            const q = testBank[i];
-            document.getElementById('q-progress').innerText = `प्रश्न ${i + 1} / ${testBank.length}`;
+            const q = testQuestions[i];
+            document.getElementById('q-progress').innerText = `प्रश्न ${i + 1} / ${testQuestions.length}`;
             document.getElementById('q-text').innerText = q.q;
             const ob = document.getElementById('options-box');
             ob.innerHTML = '';
@@ -186,11 +235,11 @@
                 b.onclick = () => { responses[i] = idx; renderQ(i); };
                 ob.appendChild(b);
             });
-            document.getElementById('btn-next').innerText = (i === testBank.length - 1) ? "सबमिट करें" : "अगला प्रश्न";
+            document.getElementById('btn-next').innerText = (i === testQuestions.length - 1) ? "टेस्ट समाप्त और सबमिट करें" : "अगला प्रश्न";
         }
 
         function nextQuestion() {
-            if (curIdx < testBank.length - 1) { curIdx++; renderQ(curIdx); }
+            if (curIdx < testQuestions.length - 1) { curIdx++; renderQ(curIdx); }
             else { clearInterval(tInterval); endExam(); }
         }
 
@@ -198,7 +247,7 @@
             document.getElementById('screen-exam').classList.add('hidden');
             document.getElementById('screen-result').classList.remove('hidden');
             let c = 0, w = 0;
-            testBank.forEach((q, i) => {
+            testQuestions.forEach((q, i) => {
                 if (responses[i] !== undefined) {
                     if (responses[i] === q.correct) c++; else w++;
                 }
@@ -207,30 +256,18 @@
             document.getElementById('score-net').innerText = Math.max(0, net).toFixed(2);
             document.getElementById('stat-correct').innerText = c;
             document.getElementById('stat-wrong').innerText = w;
-            document.getElementById('stat-left').innerText = testBank.length - (c + w);
+            document.getElementById('stat-left').innerText = testQuestions.length - (c + w);
 
             const sol = document.getElementById('solutions-container');
             sol.innerHTML = '';
-            testBank.forEach((q, i) => {
+            testQuestions.forEach((q, i) => {
                 sol.innerHTML += `
                     <div style="margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
                         <p style="font-weight: 600;">${i + 1}. ${q.q}</p>
-                        <p style="font-size: 13px; margin: 4px 0;">सही उत्तर: <b>${String.fromCharCode(65 + q.correct)}</b></p>
+                        <p style="font-size: 13px; margin: 4px 0;">सही उत्तर: <b style="color: #28a745;">${String.fromCharCode(65 + q.correct)}</b></p>
                         <div class="explanation-box">${q.exp}</div>
                     </div>`;
             });
-        }
-
-        function openPaymentModal() { document.getElementById('modal-pay').classList.remove('hidden'); }
-        function closePaymentModal() { document.getElementById('modal-pay').classList.add('hidden'); }
-        async function submitPayment() {
-            const utr = document.getElementById('utr-input').value.trim();
-            if (!utr) { alert("कृपया UTR नंबर दर्ज करें!"); return; }
-            if (supabase) {
-                await supabase.from('user_access').insert([{ telegram_id: tgUser.id, full_name: tgUser.first_name, payment_utr: utr, is_paid: false }]);
-            }
-            alert("धन्यवाद! आपका UTR सत्यापन के लिए भेज दिया गया है। जल्द ही टेस्ट अनलॉक कर दिया जाएगा।");
-            closePaymentModal();
         }
     </script>
 </body>
